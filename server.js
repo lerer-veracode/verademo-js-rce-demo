@@ -89,6 +89,7 @@ function page(title, body, opts) {
     .empty h2 { margin: 12px 0 6px; color: var(--brand); }
     .empty p { color: #5a6673; margin: 0 0 20px; }
     .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    footer { border-top: 1px solid #e3e7eb; color: #8a95a1; font-size: 12px; text-align: center; padding: 18px 16px; }
   </style>
 </head>
 <body>
@@ -106,6 +107,7 @@ function page(title, body, opts) {
   <div class="wrap">
     ${body}
   </div>
+  <footer>⚠️ Intentionally vulnerable demo app — for Veracode Fix demonstrations only. Do not deploy.</footer>
 </body>
 </html>`;
 }
