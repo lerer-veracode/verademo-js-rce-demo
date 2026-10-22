@@ -57,18 +57,20 @@ function page(title, body, opts) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${title} · VeraDemo JS</title>
   <style>
-    :root { --brand: #003f5c; --brand-dark: #002b3f; --bg: #f4f6f8; }
+    /* Palette borrowed from veracode.com: navy "clarinet" + "blue atoll" cyan accent. */
+    :root { --brand: #002856; --brand-dark: #001a3a; --accent: #00b3e6; --bg: #f4f6f8; }
     * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; margin: 0; color: #1a1a1a; background: var(--bg); }
-    .topbar { display: flex; align-items: center; gap: 14px; background: var(--brand); color: #fff; padding: 0 20px; height: 56px; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
+    html, body { height: 100%; }
+    body { font-family: system-ui, -apple-system, Segoe UI, sans-serif; margin: 0; color: #1a1a1a; background: var(--bg); display: flex; flex-direction: column; min-height: 100vh; }
+    .topbar { display: flex; align-items: center; gap: 14px; background: var(--brand); color: #fff; padding: 0 20px; height: 56px; border-bottom: 3px solid var(--accent); box-shadow: 0 1px 4px rgba(0,0,0,.2); }
     .topbar a.home { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 8px; color: #fff; text-decoration: none; transition: background .15s; }
     .topbar a.home:hover { background: var(--brand-dark); }
     .topbar a.home svg { width: 22px; height: 22px; }
     .topbar .brand { font-weight: 700; font-size: 17px; letter-spacing: .2px; }
     .topbar .spacer { flex: 1; }
-    .topbar .navlinks a { color: #cfe3ee; text-decoration: none; margin-left: 18px; font-size: 14px; }
-    .topbar .navlinks a:hover { color: #fff; }
-    .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+    .topbar .navlinks a { color: #bcd9e8; text-decoration: none; margin-left: 18px; font-size: 14px; }
+    .topbar .navlinks a:hover { color: var(--accent); }
+    .wrap { flex: 1 0 auto; width: 100%; max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
     h1 { color: var(--brand); margin-top: 8px; }
     .card { background: #fff; border: 1px solid #e3e7eb; border-radius: 10px; padding: 22px; margin: 16px 0; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
     label { display: block; margin: 8px 0 4px; font-weight: 600; }
@@ -89,7 +91,7 @@ function page(title, body, opts) {
     .empty h2 { margin: 12px 0 6px; color: var(--brand); }
     .empty p { color: #5a6673; margin: 0 0 20px; }
     .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-    footer { border-top: 1px solid #e3e7eb; color: #8a95a1; font-size: 12px; text-align: center; padding: 18px 16px; }
+    footer { flex-shrink: 0; background: var(--brand); border-top: 3px solid var(--accent); color: #bcd9e8; font-size: 12px; text-align: center; padding: 16px; }
   </style>
 </head>
 <body>
@@ -103,11 +105,11 @@ function page(title, body, opts) {
     <span class="spacer"></span>
     <span class="navlinks">${navlinks}</span>
   </nav>
-  <div class="banner">⚠️ Intentionally vulnerable demo app — for Veracode Fix demonstrations only.</div>
+  <div class="banner">⚠️ Intentionally vulnerable demo app.</div>
   <div class="wrap">
     ${body}
   </div>
-  <footer>⚠️ Intentionally vulnerable demo app — for Veracode Fix demonstrations only. Do not deploy.</footer>
+  <footer>⚠️ Intentionally vulnerable demo app. Do not deploy.</footer>
 </body>
 </html>`;
 }
