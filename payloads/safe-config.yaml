@@ -1,0 +1,7 @@
+# A normal, benign config file. Upload this first to show expected behaviour.
+appName: VeraDemo JS
+theme: dark
+maxUploadSizeMb: 5
+features:
+  - login
+  - yaml-config

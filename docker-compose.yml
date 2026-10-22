@@ -1,0 +1,7 @@
+services:
+  verademo:
+    build: .
+    ports:
+      - "3000:3000"
+    # Deliberately no user: directive and no read-only / cap_drop hardening,
+    # so the container runs as root. This is part of what the demo exposes.
