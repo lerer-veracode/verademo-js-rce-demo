@@ -28,8 +28,30 @@ docker compose up --build
 # visit http://localhost:3000
 ```
 
-Rebuild with `--build` after any code change so the image isn't running stale
-code. Stop with `Ctrl+C`, then `docker compose down`.
+### Docker commands used in the demo
+
+| Command | What it does |
+|---------|--------------|
+| `docker compose up --build` | Build the image (if needed) and start the app in the foreground. |
+| `docker compose up --build -d` | Same, but run detached (in the background). |
+| `docker compose build` | Rebuild the image from the current code **without** starting it. |
+| `docker compose build --no-cache` | Rebuild from scratch, ignoring cached layers (reinstalls dependencies — use after a `package.json` change, e.g. restoring the vulnerable `js-yaml`). |
+| `docker compose down` | Stop and remove the running container. |
+
+Typical loop while demoing a code change:
+
+```bash
+# 1. stop the running app
+docker compose down
+# 2. rebuild the image from the latest code
+docker compose build
+# 3. start it again
+docker compose up
+```
+
+Or do all three at once: `docker compose up --build`. The image copies the code
+at **build time**, so every code change needs a rebuild (`--build`) before the
+container reflects it — press `Ctrl+C` to stop a foreground run first.
 
 Demo users (seeded in `db.js`): `admin` / `alice` / `bob`.
 
@@ -56,14 +78,23 @@ Demo users (seeded in `db.js`): `admin` / `alice` / `bob`.
    to show arbitrary OS command execution.
 
 ### Part 3 — Fix with Veracode
-- **SQL Injection:** let Veracode Fix rewrite the `/login` query to a
-  parameterized statement (`db.get('... WHERE username = ? AND password = ?', [username, password], ...)`).
-- **js-yaml:** Veracode flags the insecure `yaml.load()` call and the vulnerable
-  `js-yaml@3.12.0` dependency. The fix is to upgrade `js-yaml` (4.x) and use the
-  safe default `load()` (or `JSON_SCHEMA`), which rejects `!!js/function`. After
-  the fix, re-uploading `exploit-*.yaml` fails to parse / produces no hook.
-- Call out the **container hardening** gaps (runs as root, secrets in image) as
-  additional findings beyond what Fix rewrites.
+1. **Scan the app** — run a scan with the Veracode extension in the IDE to
+   surface the findings (the SQL injection, the insecure `js-yaml` usage, and
+   the vulnerable `js-yaml@3.12.0` dependency).
+2. **Apply a Veracode Fix** — open the SQL injection finding, review the
+   suggested remediation, and apply the Veracode Fix to the `/login` query
+   (turning the concatenated string into a parameterized statement).
+3. **Rebuild and verify** — stop, rebuild, and start the app again in Docker,
+   then confirm the issue is resolved:
+
+   ```bash
+   docker compose down
+   docker compose build
+   docker compose up
+   ```
+
+   Re-run the Part 1 injection (`admin' --`); it should no longer log you in,
+   confirming the fix works end to end.
 
 ---
 
@@ -71,7 +102,9 @@ Demo users (seeded in `db.js`): `admin` / `alice` / `bob`.
 ```
 server.js                      Express app (both vulnerabilities)
 db.js                          SQLite schema + seed data
+package.json / package-lock.json  Dependencies (SCA manifest; pins js-yaml@3.12.0)
 Dockerfile / docker-compose.yml  Insecure container (runs as root)
+.dockerignore                  Keeps host node_modules out of the Linux image
 payloads/safe-config.yaml      Benign YAML
 payloads/exploit-env-dump.yaml RCE: dump uid + env vars
 payloads/exploit-command.yaml  RCE: run OS commands
