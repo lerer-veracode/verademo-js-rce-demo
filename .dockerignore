@@ -1,0 +1,9 @@
+# Keep host-built artifacts out of the Linux image.
+# node_modules is rebuilt inside the image by `npm install`; copying the
+# Windows-compiled sqlite3 binary in would cause "invalid ELF header".
+node_modules
+uploads
+demo.db
+.git
+*.log
+npm-debug.log*
