@@ -96,6 +96,36 @@ Demo users (seeded in `db.js`): `admin` / `alice` / `bob`.
    Re-run the Part 1 injection (`admin' --`); it should no longer log you in,
    confirming the fix works end to end.
 
+### Part 4 — Fix the vulnerable `js-yaml` dependency
+1. **Upgrade the dependency** — in `package.json`, change `js-yaml` from
+   `3.12.0` to `^4.1.0`. (A patch bump within 3.x is **not** enough — the unsafe
+   `!!js/function` type exists throughout 3.x and was only removed in 4.0, where
+   `load()` is safe by default.)
+
+   ```json
+   "js-yaml": "^4.1.0"
+   ```
+
+2. **Rebuild and deploy** — because `package.json` changed, rebuild the image
+   from scratch so the new version is installed, then start it again:
+
+   ```bash
+   docker compose down
+   docker compose build --no-cache
+   docker compose up
+   ```
+
+3. **Verify** — re-upload `payloads/exploit-env-dump.yaml` (or any
+   `exploit-*.yaml`). It should now be **rejected** with a parse error
+   (`unknown tag !<tag:yaml.org,2002:js/function>`) and no hook runs, confirming
+   the RCE is resolved. `payloads/safe-config.yaml` still parses normally.
+
+   Optionally confirm the installed version directly:
+
+   ```bash
+   docker compose exec verademo node -e "console.log(require('js-yaml/package.json').version)"
+   ```
+
 ---
 
 ## Files
@@ -108,6 +138,7 @@ Dockerfile / docker-compose.yml  Insecure container (runs as root)
 payloads/safe-config.yaml      Benign YAML
 payloads/exploit-env-dump.yaml RCE: dump uid + env vars
 payloads/exploit-command.yaml  RCE: run OS commands
+payloads/exploit-version.yaml  RCE: report the js-yaml version in the container
 ```
 
 ## Re-securing checklist (post-demo reference)

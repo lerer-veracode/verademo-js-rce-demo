@@ -91,6 +91,7 @@ function page(title, body, opts) {
     .empty h2 { margin: 12px 0 6px; color: var(--brand); }
     .empty p { color: #5a6673; margin: 0 0 20px; }
     .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .err-detail { background: #fff5f5; border: 1px solid #ffd0d0; color: #8a1f1f; padding: 12px 14px; border-radius: 6px; white-space: pre-wrap; word-break: break-word; text-align: left; font-size: 13px; line-height: 1.45; margin: 4px 0 20px; }
     footer { flex-shrink: 0; background: var(--brand); border-top: 3px solid var(--accent); color: #bcd9e8; font-size: 12px; text-align: center; padding: 16px; }
   </style>
 </head>
@@ -253,11 +254,24 @@ app.post('/config', requireAuth, upload.single('config'), (req, res) => {
     // config's onLoad hook, yielding remote code execution.
     config = yaml.load(raw);
   } catch (e) {
-    return res.send(
+    return res.status(400).send(
       page(
-        'Config',
-        `<h1>Config</h1><p class="err">Parse error: ${escapeHtml(e.message)}</p>
-         <p><a class="btn" href="/config">← Back to upload</a></p>`,
+        'Config rejected',
+        `
+    <h1>Config rejected</h1>
+    <div class="card">
+      <div class="empty" style="padding-bottom:8px">
+        <div class="icon">🚫</div>
+        <h2>Could not parse the YAML file</h2>
+        <p>The file was rejected and no configuration was applied.</p>
+      </div>
+      <div class="err-detail">${escapeHtml(e.message)}</div>
+      <div class="actions">
+        <a class="btn" href="/config">← Back to upload</a>
+        <a class="btn secondary" href="/">Go home</a>
+      </div>
+    </div>
+  `,
         { user: req.session.user }
       )
     );
