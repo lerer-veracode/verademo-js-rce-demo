@@ -17,20 +17,19 @@ secret exposure.
 
 ---
 
-## Run it
+## Run it (Docker)
 
-### Locally
-```bash
-npm install
-npm run init-db     # seeds demo.db (optional; server auto-seeds on first run)
-npm start           # http://localhost:3000
-```
+Run the app in Docker so the RCE demo shows real privilege and secret exposure:
+the container runs as **root** (`uid 0`), the exploit payloads use Linux commands
+(`id`, `/etc/passwd`), and the "secret" env vars are baked into the image.
 
-### In Docker (recommended for the root / env-exposure part)
 ```bash
 docker compose up --build
 # visit http://localhost:3000
 ```
+
+Rebuild with `--build` after any code change so the image isn't running stale
+code. Stop with `Ctrl+C`, then `docker compose down`.
 
 Demo users (seeded in `db.js`): `admin` / `alice` / `bob`.
 
