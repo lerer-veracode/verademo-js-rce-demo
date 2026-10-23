@@ -120,19 +120,18 @@ function page(title, body, opts) {
 // --------------------------------------------------------------------------
 app.get('/', (req, res) => {
   const user = req.session.user;
+  const cardBody = user
+    ? `<p>Logged in as <strong>${user.username}</strong> (${user.role}).</p>
+           <p><a class="btn" href="/config">Upload a YAML config</a></p>`
+    : `<p>A small internal tool for managing application configuration.</p>
+           <p><a class="btn" href="/login">Log in to continue</a></p>`;
   res.send(
     page(
       'Home',
       `
     <h1>VeraDemo JS</h1>
     <div class="card">
-    ${
-      user
-        ? `<p>Logged in as <strong>${user.username}</strong> (${user.role}).</p>
-           <p><a class="btn" href="/config">Upload a YAML config</a></p>`
-        : `<p>A small internal tool for managing application configuration.</p>
-           <p><a class="btn" href="/login">Log in to continue</a></p>`
-    }
+    ${cardBody}
     </div>
   `,
       { user }
