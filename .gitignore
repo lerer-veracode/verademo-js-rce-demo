@@ -2,3 +2,6 @@ node_modules/
 uploads/
 demo.db
 *.log
+*.zip
+demo/*
+!demo/commands.txt

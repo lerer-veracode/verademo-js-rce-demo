@@ -1,0 +1,30 @@
+
+
+SBOM
+veracode sbom -s . --type directory -f cyclonedx-json -o sbom-cyclonedx-json.json
+
+SCA
+srcclr scan . --allow-dirty
+
+PACKAGE
+veracode package -s . -o demo
+
+IaC & Container
+veracode scan --source . --type directory --format table
+
+
+
+Demo Docker Commands
+
+# 1. stop the running app
+docker compose down
+
+# 2. rebuild the image from the latest code
+docker compose build
+
+# 2a. rebuild the image from the latest code without cache (for dependency change)
+docker compose build --no-cache
+
+# 3. start it again
+docker compose up
+
